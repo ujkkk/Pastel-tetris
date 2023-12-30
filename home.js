@@ -204,16 +204,22 @@ function checkClearBlocks(){
     for(let i=0; i<ROW; i++){
         for(let j=0; j<COL; j++){
             if(blocks[i*COL+j] != null){
-                addClearBlockAtVertical(i*COL+j);
-                addClearBlockAtHorizon(i*COL+j);
+                // 연속된 블록 체크
+                addClearBlocks(i*COL+j);
             }
-                
         }
     }
-    deleteBLock();
+    deleteClearBlocks();
 }
 
-function deleteBLock(){
+function addClearBlocks(startPos){
+    addClearBlockAtVertical(startPos);
+    addClearBlockAtHorizon(startPos);
+    addClearBlockAtDiagonal1(startPos);
+    addClearBlockAtDiagonal2(startPos);
+}
+
+function deleteClearBlocks(){
     for(let i=0; i<ROW; i++){
         for(let j=0; j<COL; j++){
             if(deleteBlockMap[i][j] == true){
@@ -238,6 +244,22 @@ function addClearBlockAtHorizon(startPos){
     let isVisited = Array.from(Array(10), () => Array(10).fill(false));
     dx = [1,-1];
     dy = [0, 0];
+    dfs(startPos, 0, isVisited, Array(), dx, dy);
+}
+
+// 대각선 방향으로 연속된 블록 체크 (1)
+function addClearBlockAtDiagonal1(startPos){
+    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    dx = [1,-1];
+    dy = [-1, 1];
+    dfs(startPos, 0, isVisited, Array(), dx, dy);
+}
+
+// 대각선 방향으로 연속된 블록 체크 (2)
+function addClearBlockAtDiagonal2(startPos){
+    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    dx = [1,-1];
+    dy = [1, -1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
 }
 
@@ -273,88 +295,6 @@ function dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
         }
     }
 
-}
-
-// function addClearBlockAtVerical(startPos, isVisited, deleteBlockMap){
-//     //총 8방향 - 시계방향
-//     let dy = [1, -1];
-//     let positionList = new Array();
-
-//     let r =  Math.floor(startPos/COL);
-//     let c =  Math.floor(startPos%COL);
-
-//     const que = new Queue();
-//     que.enqueue({pos:startPos, depth : 1});
-//     isVisited[r][c] = true;
-//     positionList.push(startPos);
-//     //console.log(startPos);
-
-//     while(!que.isEmpty()){
-//         let current = que.dequeue();
-//         positionList.push(current);
-
-//         if(current.depth >= 3)
-//             return positionList;
-
-//         for(let i=0; i<dy.length; i++){
-//             let newRow =  Math.floor(current/COL + dy[i]);
-//             let newCol =  current%COL;
-           
-//            if(isRange(newRow, newCol) && !isVisited[newRow][newCol]){
-//                 let newPos = newRow*COL + newCol;
-
-//                 if(blocks[current].color == blocks[newPos].color){
-//                     deleteBlockMap[newRow][newCol] = true;
-//                     que.enqueue({ pos : newPos, depth : current.depth +1});
-//                     isVisited[newRow][newCol] = true;   
-//                     deleteBlockMap[newRow][newCol] = false;
-//                 }
-//         }
-//     }    
-    
-           
-//     }
-// }
-// function getTetrominoPos(){
-//     let startPos =  Math.floor( Math.random()*(COL-1));
-//     let isVisited =  Array.from(Array(4), () => Array(10).fill(false))
-//     return bfs(startPos,isVisited);
-// }
-
-
-
-function bfs(startPos, isVisited){
-    let dr = [0, 1, 0, -1];
-    let dc = [1, 0, -1, 0];
-    let positionList = new Array();
-
-    let r =  Math.floor(startPos/COL);
-    let c =  Math.floor(startPos%COL);
-
-    const que = new Queue();
-    que.enqueue(startPos);
-    isVisited[r][c] = true;
-    positionList.push(startPos);
-    //console.log(startPos);
-
-    while(!que.isEmpty()){
-        let current = que.dequeue();
-        positionList.push(current);
-
-        if(positionList.length == 5)
-            return positionList;
-
-        i = Math.floor(Math.random()*4);
-           let newRow =  Math.floor(current/COL + dr[i]);
-           let newCol =  Math.floor(current%COL + dc[i]);
-           
-           if(isRange(newRow, newCol) && !isVisited[newRow][newCol]){
-                let pos = newRow*COL + newCol;
-                console.log(pos);
-                que.enqueue(pos);
-                isVisited[newRow][newCol] = true;        
-        }
-    }
 }
 
 
