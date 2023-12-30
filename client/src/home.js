@@ -1,3 +1,5 @@
+import { playLineClear } from './sound.js';
+
 class Block {
     constructor(_x, _y, _color){
         this.x = _x;
@@ -10,24 +12,6 @@ class Block {
     }
 }
 
-class Queue {
-    constructor() {
-        this._arr = [];
-    }
-
-    enqueue(data, depth) {
-        this._arr.push({ pos, depth });
-    }
-
-    dequeue() {
-        return this._arr.shift();
-    }
-
-    isEmpty() {
-        return this._arr.length === 0;
-    }
-}
-
 const ROW = 10;
 const COL = 10;
 const container = document.querySelector(".content");
@@ -36,6 +20,7 @@ var blocks = Array(100).fill(null);
 var currentColor;
 var blocksDiv = Array();
 var deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
+let timerID;
 
 const colors = {
     gray: "#EFEFEF",
@@ -64,10 +49,9 @@ window.onkeydown = function (e) {
 
 function init(){
     createBackgroundBlock();
-    // blocks[blockLoc].style.backgroundColor = getRandomColor();
     startNew();
     // timer set
-	timerID = setInterval("moveDown()",300);
+	timerID = setInterval(moveDown,300);
 }
 
 
@@ -91,7 +75,7 @@ function startNew() {
 }
 
 function getRandomColor(){
-    let i = Math.floor(Math.random()*6);
+    let i = Math.floor(Math.random()*2);
     switch(i) {
         case 0:  // if (x === 'value1')
           return colors.red;
@@ -196,7 +180,6 @@ function checkCrushBlock(){
     return false;
 }
 
-
 // 사라질 블럭 체크 후 삭제
 function checkClearBlocks(){
     deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
@@ -209,10 +192,14 @@ function checkClearBlocks(){
             }
         }
     }
-    deleteClearBlocks();
+    let isDelete =  deleteClearBlocks();
+    // 사라질 블록이 없을 때까지 반복
+    if(isDelete)
+        checkClearBlocks();
 }
 
 function addClearBlocks(startPos){
+
     addClearBlockAtVertical(startPos);
     addClearBlockAtHorizon(startPos);
     addClearBlockAtDiagonal1(startPos);
@@ -220,46 +207,52 @@ function addClearBlocks(startPos){
 }
 
 function deleteClearBlocks(){
+    let isDelete = false;
     for(let i=0; i<ROW; i++){
         for(let j=0; j<COL; j++){
             if(deleteBlockMap[i][j] == true){
+                if(isDelete == false){
+                    playLineClear();
+                    isDelete = true;
+                }
                 let deleteBlockLoc = i*COL + j;
                 blocksDiv[deleteBlockLoc].style.backgroundColor = colors.gray;
-                blocks[deleteBlockLoc] = null;		
+                blocks[deleteBlockLoc] = null;	
             }
         }
     }
+    return isDelete;
 }
 
 // 수직 방향으로 연속된 블록 체크
 function addClearBlockAtVertical(startPos){
     let isVisited = Array.from(Array(10), () => Array(10).fill(false));
-    dx = [0,0];
-    dy = [1, -1];
+    let dx = [0,0];
+    let dy = [1, -1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
 }
 
 // 수평 방향으로 연속된 블록 체크
 function addClearBlockAtHorizon(startPos){
     let isVisited = Array.from(Array(10), () => Array(10).fill(false));
-    dx = [1,-1];
-    dy = [0, 0];
+    let dx = [1,-1];
+    let dy = [0, 0];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
 }
 
 // 대각선 방향으로 연속된 블록 체크 (1)
 function addClearBlockAtDiagonal1(startPos){
     let isVisited = Array.from(Array(10), () => Array(10).fill(false));
-    dx = [1,-1];
-    dy = [-1, 1];
+    let dx = [1,-1];
+    let dy = [-1, 1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
 }
 
 // 대각선 방향으로 연속된 블록 체크 (2)
 function addClearBlockAtDiagonal2(startPos){
     let isVisited = Array.from(Array(10), () => Array(10).fill(false));
-    dx = [1,-1];
-    dy = [1, -1];
+    let dx = [1,-1];
+    let dy = [1, -1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
 }
 
@@ -287,7 +280,6 @@ function dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
 
             if(blocks[newPos] != null &&  blocks[pos].color === blocks[newPos].color){
                 deleteBlockList.push(newPos);
-                //que.enqueue({ pos : newPos, depth : current.depth +1});
                 isVisited[newRow][newCol] = true;   
                 dfs(newPos, depth+1, isVisited, deleteBlockList,dx,dy);
                 deleteBlockList.pop();
@@ -296,23 +288,3 @@ function dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
     }
 
 }
-
-
-    // blocks.forEach((background_block) =>
-    //     {
-    //         if(i==4)
-    //             return;
-    //         let newBlock = document.createElement("div");
-    //         newBlock.classList.add('block');
-    //         background_block.appendChild(newBlock);
-    //         i++;
-    //     }
-    // )
-// function createBlock(parentIndex){
-//     let blocks = document.querySelectorAll(".background_block");
-//     let i =0;
-
-//     let newBlock = document.createElement("div");
-//     newBlock.classList.add('block');
-//     blocks[parentIndex].appendChild(newBlock);
-// }
