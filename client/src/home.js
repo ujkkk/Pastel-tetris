@@ -1,3 +1,4 @@
+
 import { playLineClear } from './sound.js';
 
 class Block {
@@ -12,6 +13,7 @@ class Block {
     }
 }
 
+const COLOR_SIZE = 3;
 const ROW = 10;
 const COL = 10;
 const container = document.querySelector(".content");
@@ -21,6 +23,7 @@ var currentColor;
 var blocksDiv = Array();
 var deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
 let timerID;
+let timerID2;
 
 const colors = {
     gray: "#EFEFEF",
@@ -75,7 +78,7 @@ function startNew() {
 }
 
 function getRandomColor(){
-    let i = Math.floor(Math.random()*2);
+    let i = Math.floor(Math.random()*COLOR_SIZE);
     switch(i) {
         case 0:  // if (x === 'value1')
           return colors.red;
@@ -180,38 +183,38 @@ function checkCrushBlock(){
     return false;
 }
 
+function sleep(ms) {
+    const wakeUpTime = Date.now() + ms;
+    while (Date.now() < wakeUpTime) {}
+  }
+
 // 사라질 블럭 체크 후 삭제
 function checkClearBlocks(){
     deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
-
-    for(let i=0; i<ROW; i++){
-        for(let j=0; j<COL; j++){
-            if(blocks[i*COL+j] != null){
-                // 연속된 블록 체크
-                addClearBlocks(i*COL+j);
-            }
+    for(let block of blocks){
+        if(block != null){
+            addClearBlocks(block.x*COL + block.y)
         }
     }
-    let isDelete =  deleteClearBlocks();
+    let isDelete = deleteClearBlocks();
+
+    // 블록 내려오기
+    posChange();
+    //repaint();
     // 사라질 블록이 없을 때까지 반복
     if(isDelete)
         checkClearBlocks();
 }
 
-function addClearBlocks(startPos){
-
-    addClearBlockAtVertical(startPos);
-    addClearBlockAtHorizon(startPos);
-    addClearBlockAtDiagonal1(startPos);
-    addClearBlockAtDiagonal2(startPos);
-}
-
+// 삭제해야할 블록 삭제
 function deleteClearBlocks(){
     let isDelete = false;
+    
     for(let i=0; i<ROW; i++){
         for(let j=0; j<COL; j++){
             if(deleteBlockMap[i][j] == true){
                 if(isDelete == false){
+                    // 소리 재생
                     playLineClear();
                     isDelete = true;
                 }
@@ -223,6 +226,60 @@ function deleteClearBlocks(){
     }
     return isDelete;
 }
+
+function repaint(){
+    for(let i=0; i<COL*ROW; i++){
+        if(blocks[i] == null){
+            blocksDiv[i].style.backgroundColor = colors.gray;
+            continue;
+        }
+        blocks[i].draw();
+    }
+}
+
+
+function deepCopy(arr) {
+    return JSON.parse(JSON.stringify(arr));
+}
+
+function posChange(){
+    let cloneBlocks = deepCopy(blocks);
+    for(let i= ROW-1; i>=0 ; i--){
+        for(let j=COL-1; j>=0; j--){
+            if(deleteBlockMap[i][j]==true){
+                for(let c= 0; c<=i-1 ; c++){
+                    let curPos = c*COL + j;
+                    let isFirst = true;
+
+                    if(blocks[curPos]== null)
+                        continue;
+                    
+                    // 가장 위에 있는 칸 삭제
+                    if(isFirst){
+                        blocks[curPos] = null;
+                        blocksDiv[curPos].style.backgroundColor = colors.gray;
+                        isFirst = false;
+                    }
+                    let nextPos = curPos + COL;
+                    blocks[nextPos] = new Block(Math.floor(nextPos/COL),nextPos%COL, cloneBlocks[curPos].color);
+                    blocks[nextPos].draw();
+                    //blocksDiv[pos].style.backgroundColor = blocks[pos].color;    
+                    
+                }
+            }
+        }
+    }
+}
+
+// 연속된 블록 확인 후 deleteBlockMap 변경
+function addClearBlocks(startPos){
+    addClearBlockAtVertical(startPos);
+    addClearBlockAtHorizon(startPos);
+    addClearBlockAtDiagonal1(startPos);
+    addClearBlockAtDiagonal2(startPos);
+}
+
+
 
 // 수직 방향으로 연속된 블록 체크
 function addClearBlockAtVertical(startPos){
