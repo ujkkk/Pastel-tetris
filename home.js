@@ -10,6 +10,24 @@ class Block {
     }
 }
 
+class Queue {
+    constructor() {
+        this._arr = [];
+    }
+
+    enqueue(data, depth) {
+        this._arr.push({ pos, depth });
+    }
+
+    dequeue() {
+        return this._arr.shift();
+    }
+
+    isEmpty() {
+        return this._arr.length === 0;
+    }
+}
+
 const ROW = 10;
 const COL = 10;
 const container = document.querySelector(".content");
@@ -17,6 +35,7 @@ var blockLoc = 0;
 var blocks = Array(100).fill(null);
 var currentColor;
 var blocksDiv = Array();
+var deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
 
 const colors = {
     gray: "#EFEFEF",
@@ -115,7 +134,10 @@ function moveDirect(){
         }
     }
     blocksDiv[blockLoc].style.backgroundColor = currentColor;
+    // 더 이상 내려 갈 수 없는 경우, 블록 객체를 배열에 삽입함
     addBlock();
+    // 연속 블록 체크
+    checkClearBlocks();
 }
 
 function moveDown(){
@@ -128,6 +150,7 @@ function moveDown(){
         // 더 이상 내려 갈 수 없는 경우, 블록 객체를 배열에 삽입함
         addBlock();
         // 연속 블록 체크
+        checkClearBlocks();
     }	
 }
 
@@ -174,24 +197,94 @@ function checkCrushBlock(){
 }
 
 
-// function getTetrominoPos(){
-//     let startPos =  Math.floor( Math.random()*(COL-1));
-//     let isVisited =  Array.from(Array(4), () => Array(10).fill(false))
-//     return bfs(startPos,isVisited);
-// }
+// 사라질 블럭 체크 후 삭제
+function checkClearBlocks(){
+    deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
 
+    for(let i=0; i<ROW; i++){
+        for(let j=0; j<COL; j++){
+            if(blocks[i*COL+j] != null){
+                addClearBlockAtVertical(i*COL+j);
+                addClearBlockAtHorizon(i*COL+j);
+            }
+                
+        }
+    }
+    deleteBLock();
+}
 
+function deleteBLock(){
+    for(let i=0; i<ROW; i++){
+        for(let j=0; j<COL; j++){
+            if(deleteBlockMap[i][j] == true){
+                let deleteBlockLoc = i*COL + j;
+                blocksDiv[deleteBlockLoc].style.backgroundColor = colors.gray;
+                blocks[deleteBlockLoc] = null;		
+            }
+        }
+    }
+}
 
-// function bfs(startPos, isVisited){
-//     let dr = [0, 1, 0, -1];
-//     let dc = [1, 0, -1, 0];
+// 수직 방향으로 연속된 블록 체크
+function addClearBlockAtVertical(startPos){
+    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    dx = [0,0];
+    dy = [1, -1];
+    dfs(startPos, 0, isVisited, Array(), dx, dy);
+}
+
+// 수평 방향으로 연속된 블록 체크
+function addClearBlockAtHorizon(startPos){
+    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    dx = [1,-1];
+    dy = [0, 0];
+    dfs(startPos, 0, isVisited, Array(), dx, dy);
+}
+
+function isRange(row, col){
+    if(row >=0 && row <ROW && col >= 0 && col <COL){
+        return true;
+    }
+    return false;
+}
+
+function dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
+    
+    if(depth >= 3){
+        deleteBlockList.forEach(pos => {
+            deleteBlockMap[Math.floor(pos/COL)][pos%COL] = true; 
+        });
+    }
+
+    for(let i=0; i<dx.length; i++){
+        let newRow =  Math.floor(pos/COL + dy[i]);
+        let newCol =  pos%COL + dx[i];
+
+        if(isRange(newRow, newCol) && !isVisited[newRow][newCol] ){
+            let newPos = newRow*COL + newCol;
+
+            if(blocks[newPos] != null &&  blocks[pos].color === blocks[newPos].color){
+                deleteBlockList.push(newPos);
+                //que.enqueue({ pos : newPos, depth : current.depth +1});
+                isVisited[newRow][newCol] = true;   
+                dfs(newPos, depth+1, isVisited, deleteBlockList,dx,dy);
+                deleteBlockList.pop();
+            }
+        }
+    }
+
+}
+
+// function addClearBlockAtVerical(startPos, isVisited, deleteBlockMap){
+//     //총 8방향 - 시계방향
+//     let dy = [1, -1];
 //     let positionList = new Array();
 
 //     let r =  Math.floor(startPos/COL);
 //     let c =  Math.floor(startPos%COL);
 
 //     const que = new Queue();
-//     que.enqueue(startPos);
+//     que.enqueue({pos:startPos, depth : 1});
 //     isVisited[r][c] = true;
 //     positionList.push(startPos);
 //     //console.log(startPos);
@@ -200,28 +293,71 @@ function checkCrushBlock(){
 //         let current = que.dequeue();
 //         positionList.push(current);
 
-//         if(positionList.length == 5)
+//         if(current.depth >= 3)
 //             return positionList;
 
-//         i = Math.floor(Math.random()*4);
-//            let newRow =  Math.floor(current/COL + dr[i]);
-//            let newCol =  Math.floor(current%COL + dc[i]);
+//         for(let i=0; i<dy.length; i++){
+//             let newRow =  Math.floor(current/COL + dy[i]);
+//             let newCol =  current%COL;
            
 //            if(isRange(newRow, newCol) && !isVisited[newRow][newCol]){
-//                 let pos = newRow*COL + newCol;
-//                 console.log(pos);
-//                 que.enqueue(pos);
-//                 isVisited[newRow][newCol] = true;        
+//                 let newPos = newRow*COL + newCol;
+
+//                 if(blocks[current].color == blocks[newPos].color){
+//                     deleteBlockMap[newRow][newCol] = true;
+//                     que.enqueue({ pos : newPos, depth : current.depth +1});
+//                     isVisited[newRow][newCol] = true;   
+//                     deleteBlockMap[newRow][newCol] = false;
+//                 }
 //         }
+//     }    
+    
+           
 //     }
+// }
+// function getTetrominoPos(){
+//     let startPos =  Math.floor( Math.random()*(COL-1));
+//     let isVisited =  Array.from(Array(4), () => Array(10).fill(false))
+//     return bfs(startPos,isVisited);
 // }
 
-// function isRange(row, col){
-//     if(row >=0 && row <ROW && col >= 0 && col <COL){
-//         return true;
-//     }
-//     return false;
-// }
+
+
+function bfs(startPos, isVisited){
+    let dr = [0, 1, 0, -1];
+    let dc = [1, 0, -1, 0];
+    let positionList = new Array();
+
+    let r =  Math.floor(startPos/COL);
+    let c =  Math.floor(startPos%COL);
+
+    const que = new Queue();
+    que.enqueue(startPos);
+    isVisited[r][c] = true;
+    positionList.push(startPos);
+    //console.log(startPos);
+
+    while(!que.isEmpty()){
+        let current = que.dequeue();
+        positionList.push(current);
+
+        if(positionList.length == 5)
+            return positionList;
+
+        i = Math.floor(Math.random()*4);
+           let newRow =  Math.floor(current/COL + dr[i]);
+           let newCol =  Math.floor(current%COL + dc[i]);
+           
+           if(isRange(newRow, newCol) && !isVisited[newRow][newCol]){
+                let pos = newRow*COL + newCol;
+                console.log(pos);
+                que.enqueue(pos);
+                isVisited[newRow][newCol] = true;        
+        }
+    }
+}
+
+
     // blocks.forEach((background_block) =>
     //     {
     //         if(i==4)

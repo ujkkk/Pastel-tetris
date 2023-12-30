@@ -5,9 +5,8 @@ class Block {
         this.color = _color;
     }
 
-    // 필요한 메소드 삽입하세요.
     draw(){
-        tds[x*10+y].style.backgroundColor = this.color;
+        blocksDiv[this.x*COL+this.y].style.backgroundColor = this.color;
     }
 }
 
