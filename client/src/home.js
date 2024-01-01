@@ -18,10 +18,10 @@ const ROW = 10;
 const COL = 10;
 const container = document.querySelector(".content");
 var blockLoc = 0;
-var blocks = Array(100).fill(null);
+var blocks = Array(ROW*COL).fill(null);
 var currentColor;
 var blocksDiv = Array();
-var deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
+var deleteBlockMap = Array.from(Array(ROW), () => Array(COL).fill(false));
 let timerID;
 let timerID2;
 
@@ -63,17 +63,33 @@ function init(){
 function createBackgroundBlock(){
     for(let i=0; i< ROW; i++){
         for(let j= 0; j< COL; j++){
+            let fancy_block = document.createElement("div");
+            fancy_block.classList.add('fancy-block');
+            
+            let left = document.createElement("div");
+            left.classList.add('left-frills');
+            left.classList.add('frills');
+            fancy_block.appendChild(left);
+
             let block = document.createElement("div");
             block.classList.add('background_block');
-            container.appendChild(block);
+            fancy_block.appendChild(block);
             blocksDiv.push(block);
+
+            // let right = document.createElement("div");
+            // right.classList.add('right-frills');
+            // right.classList.add('frills');
+            // fancy_block.appendChild(right);
+
+            container.appendChild(fancy_block);
         }
     }
 }
 
+
 function startNew() {
     // new start
-    blockLoc = Math.floor(Math.random()*10);
+    blockLoc = Math.floor(Math.random()*COL);
     currentColor = getRandomColor();
     blocksDiv[blockLoc].style.backgroundColor = currentColor;
 }
@@ -115,9 +131,9 @@ function moveLeft() {
 function moveDirect(){
     blocksDiv[blockLoc].style.backgroundColor = colors.gray;
     while(!checkCrushBlock() && !checkCrushFloor()){
-        blockLoc += (10);
-        if(blockLoc >= 100){
-            blockLoc -= 10;
+        blockLoc += (COL);
+        if(blockLoc >= ROW*COL){
+            blockLoc -= COL;
             break;
         }
     }
@@ -131,7 +147,7 @@ function moveDirect(){
 function moveDown(){
 	if(canDown()) {
         blocksDiv[blockLoc].style.backgroundColor = colors.gray;			
-        blockLoc += 10;
+        blockLoc += COL;
         blocksDiv[blockLoc].style.backgroundColor = currentColor;
     }
     else {
@@ -143,23 +159,38 @@ function moveDown(){
 }
 
 function addBlock(){
-    let row = Math.floor(blockLoc/10);
-    let col = blockLoc%10;
+    let row = Math.floor(blockLoc/COL);
+    let col = blockLoc%COL;
 
     blocks[blockLoc] = new Block(row,col, currentColor);
     blocks[blockLoc].draw();
-    animation();
 
     startNew();
 }
 
-function animation(){
-    $(".background_block").bind('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
-        $(this).removeClass('active');
-    })
-     $(this).addClass("active");
+function animation(pos, color){
+    applyRandomButtonColor(color); 
+    $(".fancy-block").eq(pos).bind('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+        $(".fancy-block").removeClass('active');
+    }) 
+     $(".fancy-block").eq(pos).addClass("active");
 }
 
+  // 색상 지정
+  function applyRandomButtonColor(color) {
+    $(".frills").css("background-color", color);
+
+    // JavaScript로 ::before와 ::after에 직접 스타일 적용
+    $(".frills").each(function() {
+        var beforeStyle = window.getComputedStyle(this, '::before');
+        var afterStyle = window.getComputedStyle(this, '::after');
+
+        $(this).css({
+            '--before-bg-color': color,
+            '--after-bg-color': color
+        });
+    });
+  }
 
 function canDown() {
     if(checkCrushFloor() || checkCrushBlock())
@@ -176,8 +207,8 @@ function checkCrushFloor(){
 }
 
 function checkCrushWithSideBlock(isRight){
-    let row = Math.floor(blockLoc/10);
-	let col = blockLoc%10;
+    let row = Math.floor(blockLoc/COL);
+	let col = blockLoc%COL;
 
     for(let i=0; i<blocks.length; i++){
         let existedBlock = blocks[i];
@@ -194,8 +225,8 @@ function checkCrushWithSideBlock(isRight){
 
 // 쌓여있는 블록 체크
 function checkCrushBlock(){	
-    let row = Math.floor(blockLoc/10);
-	let col = blockLoc%10;
+    let row = Math.floor(blockLoc/COL);
+	let col = blockLoc%COL;
 
     for(let i=0; i<blocks.length; i++){
         let existedBlock = blocks[i];
@@ -217,7 +248,7 @@ function sleep(ms) {
 
 // 사라질 블럭 체크 후 삭제
 function checkClearBlocks(){
-    deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
+    deleteBlockMap = Array.from(Array(ROW), () => Array(COL).fill(false));
     for(let block of blocks){
         if(block != null){
             addClearBlocks(block.row*COL + block.col)
@@ -251,8 +282,10 @@ function deleteClearBlocks(){
                     isDelete = true;
                 }
                 let deleteBlockLoc = i*COL + j;
+                animation(deleteBlockLoc, blocks[deleteBlockLoc].color);
                 blocksDiv[deleteBlockLoc].style.backgroundColor = colors.gray;
-                blocks[deleteBlockLoc] = null;	
+                 blocks[deleteBlockLoc] = null;	
+               
             }
         }
     }
@@ -329,7 +362,7 @@ function addClearBlocks(startPos){
 
 // 수직 방향으로 연속된 블록 체크
 function addClearBlockAtVertical(startPos){
-    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    let isVisited = Array.from(Array(ROW), () => Array(COL).fill(false));
     let dx = [0,0];
     let dy = [1, -1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
@@ -337,7 +370,7 @@ function addClearBlockAtVertical(startPos){
 
 // 수평 방향으로 연속된 블록 체크
 function addClearBlockAtHorizon(startPos){
-    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    let isVisited = Array.from(Array(ROW), () => Array(COL).fill(false));
     let dx = [1,-1];
     let dy = [0, 0];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
@@ -345,7 +378,7 @@ function addClearBlockAtHorizon(startPos){
 
 // 대각선 방향으로 연속된 블록 체크 (1)
 function addClearBlockAtDiagonal1(startPos){
-    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    let isVisited = Array.from(Array(ROW), () => Array(COL).fill(false));
     let dx = [1,-1];
     let dy = [-1, 1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
@@ -353,7 +386,7 @@ function addClearBlockAtDiagonal1(startPos){
 
 // 대각선 방향으로 연속된 블록 체크 (2)
 function addClearBlockAtDiagonal2(startPos){
-    let isVisited = Array.from(Array(10), () => Array(10).fill(false));
+    let isVisited = Array.from(Array(ROW), () => Array(COL).fill(false));
     let dx = [1,-1];
     let dy = [1, -1];
     dfs(startPos, 0, isVisited, Array(), dx, dy);
