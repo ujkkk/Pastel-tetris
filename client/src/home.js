@@ -2,18 +2,18 @@
 import { playLineClear } from './sound.js';
 
 class Block {
-    constructor(_x, _y, _color){
-        this.x = _x;
-        this.y = _y;
+    constructor(_row, _col, _color){
+        this.row = _row;
+        this.col = _col;
         this.color = _color;
     }
 
     draw(){
-        blocksDiv[this.x*COL+this.y].style.backgroundColor = this.color;
+        blocksDiv[this.row*COL+this.col].style.backgroundColor = this.color;
     }
 }
 
-const COLOR_SIZE = 3;
+const COLOR_SIZE = 6;
 const ROW = 10;
 const COL = 10;
 const container = document.querySelector(".content");
@@ -34,6 +34,7 @@ const colors = {
     violet : "#D0D0DF",
     yellow : "#F4E5CB"
 }
+
 
 window.focus();
 window.onload =()=> {
@@ -96,7 +97,7 @@ function getRandomColor(){
 }
 
 function moveRight() {
-    if(blockLoc%COL == COL-1)
+    if(blockLoc%COL == COL-1 || checkCrushWithSideBlock(true))
         return;
     blocksDiv[blockLoc].style.backgroundColor = colors.gray;		
     blockLoc +=1;
@@ -104,7 +105,7 @@ function moveRight() {
 }
 
 function moveLeft() {
-    if(blockLoc%COL == 0)
+    if(blockLoc%COL == 0 || checkCrushWithSideBlock(false))
         return; 		
     blocksDiv[blockLoc].style.backgroundColor = colors.gray;	
     blockLoc -= 1;
@@ -142,12 +143,21 @@ function moveDown(){
 }
 
 function addBlock(){
-    let i = Math.floor(blockLoc/10);
-    let j = blockLoc%10;
+    let row = Math.floor(blockLoc/10);
+    let col = blockLoc%10;
 
-    blocks[blockLoc] = new Block(i,j, currentColor);
+    blocks[blockLoc] = new Block(row,col, currentColor);
     blocks[blockLoc].draw();
+    animation();
+
     startNew();
+}
+
+function animation(){
+    $(".background_block").bind('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+        $(this).removeClass('active');
+    })
+     $(this).addClass("active");
 }
 
 
@@ -159,24 +169,41 @@ function canDown() {
 
 function checkCrushFloor(){
      // 바닥 체크
-    if(blockLoc >= 90) 
+    if(blockLoc >= COL*ROW - COL) 
         return true;
     else
         return false;
 }
 
+function checkCrushWithSideBlock(isRight){
+    let row = Math.floor(blockLoc/10);
+	let col = blockLoc%10;
+
+    for(let i=0; i<blocks.length; i++){
+        let existedBlock = blocks[i];
+        // 충돌
+        if(existedBlock == null)
+            continue;
+        
+         if(row+1 == existedBlock.row && col == existedBlock.col+(isRight? -1 : 1)){
+            return true;
+        }
+    }
+    return false;
+}
 
 // 쌓여있는 블록 체크
 function checkCrushBlock(){	
-    let x = Math.floor(blockLoc/10);
-	let y = blockLoc%10;
+    let row = Math.floor(blockLoc/10);
+	let col = blockLoc%10;
+
     for(let i=0; i<blocks.length; i++){
-        let currentBlock = blocks[i];
+        let existedBlock = blocks[i];
         // 충돌
-        if(currentBlock == null)
+        if(existedBlock == null)
             continue;
         
-         if(x +1 == currentBlock.x && y == currentBlock.y){
+         if(row+1 == existedBlock.row && col == existedBlock.col){
             return true;
         }
     }
@@ -186,24 +213,29 @@ function checkCrushBlock(){
 function sleep(ms) {
     const wakeUpTime = Date.now() + ms;
     while (Date.now() < wakeUpTime) {}
-  }
+}
 
 // 사라질 블럭 체크 후 삭제
 function checkClearBlocks(){
     deleteBlockMap = Array.from(Array(10), () => Array(10).fill(false));
     for(let block of blocks){
         if(block != null){
-            addClearBlocks(block.x*COL + block.y)
+            addClearBlocks(block.row*COL + block.col)
+        }
+        if(isExist){
+            isExist = false;
+            break;
         }
     }
-    let isDelete = deleteClearBlocks();
 
-    // 블록 내려오기
-    posChange();
-    //repaint();
+    let isDelete = deleteClearBlocks();
+    
     // 사라질 블록이 없을 때까지 반복
-    if(isDelete)
+    if(isDelete){
+        // 블록 내려오기
+        posChange();
         checkClearBlocks();
+    }
 }
 
 // 삭제해야할 블록 삭제
@@ -242,43 +274,57 @@ function deepCopy(arr) {
     return JSON.parse(JSON.stringify(arr));
 }
 
+// 사라진 블록에 맞춰 블록 떨어지기
 function posChange(){
     let cloneBlocks = deepCopy(blocks);
-    for(let i= ROW-1; i>=0 ; i--){
-        for(let j=COL-1; j>=0; j--){
-            if(deleteBlockMap[i][j]==true){
-                for(let c= 0; c<=i-1 ; c++){
-                    let curPos = c*COL + j;
-                    let isFirst = true;
+    let deleteCounts = Array(COL).fill(0);
 
-                    if(blocks[curPos]== null)
-                        continue;
-                    
-                    // 가장 위에 있는 칸 삭제
-                    if(isFirst){
-                        blocks[curPos] = null;
-                        blocksDiv[curPos].style.backgroundColor = colors.gray;
-                        isFirst = false;
-                    }
-                    let nextPos = curPos + COL;
-                    blocks[nextPos] = new Block(Math.floor(nextPos/COL),nextPos%COL, cloneBlocks[curPos].color);
-                    blocks[nextPos].draw();
-                    //blocksDiv[pos].style.backgroundColor = blocks[pos].color;    
-                    
+    for(let i=0; i<ROW; i++){
+        for(let j=0; j<COL; j++){
+            if(deleteBlockMap[i][j] == true)
+                deleteCounts[j]++;
+        }
+    }
+     
+    for(let col=0; col<COL; col++){
+        let row = 0;
+        let isFirst = true;
+        while(row<ROW && deleteBlockMap[row][col] != true){
+            let curPos = row*COL + col;
+            row++;
+            if(blocks[curPos]== null){
+                continue;
+            }
+                
+            // 가장 위에 있는 칸 삭제
+            if(isFirst){
+                for(let i=0; i<deleteCounts[col]; i++){
+                    blocks[curPos+i*ROW] = null;
+                    blocksDiv[curPos+i*ROW].style.backgroundColor = colors.gray;
+                    isFirst = false;
                 }
             }
+
+            let nextPos = curPos + COL*deleteCounts[col];
+            blocks[nextPos] = new Block(Math.floor(nextPos/COL),nextPos%COL, cloneBlocks[curPos].color);
+            blocks[nextPos].draw();
+        
         }
     }
 }
 
+var isExist = false;
+
 // 연속된 블록 확인 후 deleteBlockMap 변경
 function addClearBlocks(startPos){
     addClearBlockAtVertical(startPos);
+    if(isExist) return;
     addClearBlockAtHorizon(startPos);
+    if(isExist) return;
     addClearBlockAtDiagonal1(startPos);
+    if(isExist) return;
     addClearBlockAtDiagonal2(startPos);
 }
-
 
 
 // 수직 방향으로 연속된 블록 체크
@@ -321,18 +367,18 @@ function isRange(row, col){
 }
 
 function dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
-    
     if(depth >= 3){
         deleteBlockList.forEach(pos => {
             deleteBlockMap[Math.floor(pos/COL)][pos%COL] = true; 
+            isExist = true;
         });
     }
 
-    for(let i=0; i<dx.length; i++){
+    for(let i=0; i< dx.length; i++){
         let newRow =  Math.floor(pos/COL + dy[i]);
         let newCol =  pos%COL + dx[i];
 
-        if(isRange(newRow, newCol) && !isVisited[newRow][newCol] ){
+        if(isRange(newRow, newCol) && !isVisited[newRow][newCol]){
             let newPos = newRow*COL + newCol;
 
             if(blocks[newPos] != null &&  blocks[pos].color === blocks[newPos].color){
@@ -343,5 +389,4 @@ function dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
             }
         }
     }
-
 }
