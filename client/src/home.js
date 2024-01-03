@@ -100,7 +100,7 @@ function startNew() {
 }
 
 function getRandomColor(){
-    let i = Math.floor(Math.random()*COLOR_SIZE);
+    let i = Math.floor(Math.random() * COLOR_SIZE);
     switch(i) {
         case 0:  // if (x === 'value1')
           return colors.red;
@@ -118,7 +118,7 @@ function getRandomColor(){
 }
 
 function moveRight() {
-    if(blockLoc%COL == COL-1 || checkCrushWithSideBlock(true))
+    if(blockLoc%COL == COL-1 || checkCrushWithSideBlock(true) || !canDown())
         return;
     blocksDiv[blockLoc].style.backgroundColor = colors.gray;		
     blockLoc +=1;
@@ -126,7 +126,7 @@ function moveRight() {
 }
 
 function moveLeft() {
-    if(blockLoc%COL == 0 || checkCrushWithSideBlock(false))
+    if(blockLoc%COL == 0 || checkCrushWithSideBlock(false) || !canDown())
         return; 		
     blocksDiv[blockLoc].style.backgroundColor = colors.gray;	
     blockLoc -= 1;
@@ -342,7 +342,7 @@ function posChange1(){
                 if(blocks[nextPos]== null){
                     blocksDiv[curPos].style.backgroundColor = colors.gray;
                     blocks[curPos] = null;
-                    
+
                     blocks[nextPos] = new Block(Math.floor(nextPos/COL), nextPos%COL, cloneBlocks[curPos].color);
                     blocks[nextPos].draw();
                     break;
