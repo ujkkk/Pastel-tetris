@@ -11,29 +11,36 @@
 
 
 body, html{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     font-family: "Cafe24Ssurround";
     margin: 0;
     padding: 0;
-    background-color: #F7FFE7;
+    background-color: #FCF8EE;
 
 }
 
 .outer{
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     /* 상하좌우 정렬 */
-    display : flex;
     justify-content: center;
-    align-items: center;
+    align-items:flex-start;
+    /* width: 60vw; */
     height: 100vh;
     display: flex;
+    background-color: #FCF8EE;
     flex-direction: column;
 }
 .score-container{
-    font-size: 40px;
+    font-size: 60px;
     font-family: "Cafe24Ssurround";
-    color: #464646;
-    margin-right: 70px;
-    margin-bottom: 30px; /* 조절 가능한 마진 값 */
+    color: #767167;
+    /* margin-right: 70px;
+    margin-bottom: 30px; 조절 가능한 마진 값 */
 }
 .container{
     position: relative;
@@ -41,26 +48,35 @@ body, html{
     display : flex;
     justify-content: center;
     align-items: center;
-
 }
-.next{
-    display: flex;
-    flex-direction: column;
+
+.next-container{
+    position: relative;
     text-align: center;
     align-items: center;
     justify-content: center;
-    margin-bottom: 500px;
+    margin-bottom: 450px;
     margin-left: 20px;
-    width : 80px;
-    height: 80px;
-    border: 3px solid #b5b5b5;
+}
+
+.next{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width : 70px;
+    height: 70px;
+    border: 3px solid #dadada;
     background-color: white;
     border-radius: 5px;
 }
 
-.next .next-text{
-    color : black;
+.next-text{
+    color : #767167;
+    font-size: 20px;
+    font-family: "Cafe24Ssurround";
     position: relative;
+    margin-bottom: 5px;
     
 }
 
@@ -71,6 +87,8 @@ body, html{
     position: relative;
     border-radius: 6px;
 }
+
+/* 테트리스 판 */
 .inner{
     background-color: white;
     margin-top: -100px;
@@ -91,7 +109,7 @@ body, html{
     width : 40px;
     height: 40px;
     position: relative;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #EFEFEF;
 }
 
