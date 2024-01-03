@@ -26,6 +26,7 @@ export function init(){
 export function start(){
     createBackgroundBlock();
     startNew();
+    
     // timer set
     timerID = setInterval(moveDown,300);
 }
