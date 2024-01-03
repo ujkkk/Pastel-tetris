@@ -13,19 +13,22 @@ class Block {
     }
 }
 
+const INCREASE_POINT = 100;
 const COLOR_SIZE = 6;
 const ROW = 10;
 const COL = 10;
 const container = document.querySelector(".content");
 var blockLoc = 0;
 var blocks = Array(ROW*COL).fill(null);
+var nextColor;
 var currentColor;
 var blocksDiv = Array();
 var deleteBlockMap = Array.from(Array(ROW), () => Array(COL).fill(false));
+var score = 0;
 let timerID;
-let timerID2;
 
 const colors = {
+
     gray: "#EFEFEF",
     red: "#F59C9D",
     orange : "#F5C4A2",
@@ -76,22 +79,24 @@ function createBackgroundBlock(){
             fancy_block.appendChild(block);
             blocksDiv.push(block);
 
-            // let right = document.createElement("div");
-            // right.classList.add('right-frills');
-            // right.classList.add('frills');
-            // fancy_block.appendChild(right);
-
             container.appendChild(fancy_block);
         }
     }
 }
 
-
+function selectNextColor(){
+    nextColor = getRandomColor();
+    $(".next-block").css("background-color", nextColor);
+}
+ 
 function startNew() {
     // new start
     blockLoc = Math.floor(Math.random()*COL);
-    currentColor = getRandomColor();
+    if(currentColor == null)
+        currentColor = getRandomColor();
+    else currentColor = nextColor;
     blocksDiv[blockLoc].style.backgroundColor = currentColor;
+    selectNextColor();
 }
 
 function getRandomColor(){
@@ -263,12 +268,26 @@ function checkClearBlocks(){
     
     // 사라질 블록이 없을 때까지 반복
     if(isDelete){
+        // 점수 증가
+        increseScore();
+        if(checkSpeed){
+            
+        }
         // 블록 내려오기
-        posChange();
+        posChange1();
         checkClearBlocks();
     }
 }
 
+function checkSpeed(){
+    return (score%(INCREASE_POINT*10))== 0? true : false;
+}
+
+function increseScore(){
+    score += INCREASE_POINT;
+    $(".score").html(score);
+    
+}
 // 삭제해야할 블록 삭제
 function deleteClearBlocks(){
     let isDelete = false;
@@ -284,8 +303,7 @@ function deleteClearBlocks(){
                 let deleteBlockLoc = i*COL + j;
                 animation(deleteBlockLoc, blocks[deleteBlockLoc].color);
                 blocksDiv[deleteBlockLoc].style.backgroundColor = colors.gray;
-                 blocks[deleteBlockLoc] = null;	
-               
+                blocks[deleteBlockLoc] = null;	
             }
         }
     }
@@ -307,6 +325,36 @@ function deepCopy(arr) {
     return JSON.parse(JSON.stringify(arr));
 }
 
+
+function posChange1(){
+    let cloneBlocks = deepCopy(blocks);
+
+    for(let i=ROW-2; i>=0; i--){
+        for(let j = 0; j<COL; j++){
+            var curPos = i*COL+j;
+            if(blocks[curPos] == null)
+                continue;
+
+            var nextPos = curPos + COL; 
+            //      
+            while(isRange(Math.floor(nextPos/COL), nextPos%COL)){
+                
+                if(blocks[nextPos]== null){
+                    blocksDiv[curPos].style.backgroundColor = colors.gray;
+                    blocks[curPos] = null;
+                    
+                    blocks[nextPos] = new Block(Math.floor(nextPos/COL), nextPos%COL, cloneBlocks[curPos].color);
+                    blocks[nextPos].draw();
+                    break;
+                }
+
+                nextPos+= COL;
+            }
+            
+        }
+    }
+    
+}
 // 사라진 블록에 맞춰 블록 떨어지기
 function posChange(){
     let cloneBlocks = deepCopy(blocks);
@@ -328,7 +376,6 @@ function posChange(){
             if(blocks[curPos]== null){
                 continue;
             }
-                
             // 가장 위에 있는 칸 삭제
             if(isFirst){
                 for(let i=0; i<deleteCounts[col]; i++){
@@ -337,7 +384,6 @@ function posChange(){
                     isFirst = false;
                 }
             }
-
             let nextPos = curPos + COL*deleteCounts[col];
             blocks[nextPos] = new Block(Math.floor(nextPos/COL),nextPos%COL, cloneBlocks[curPos].color);
             blocks[nextPos].draw();

@@ -1,40 +1,97 @@
-body, html{
-    margin: 0;
-    padding: 0;
+@font-face {
+    font-family: 'Cafe24Ssurround';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face{
+    font-family:'DNFBitBitv2';
+    font-style:normal;font-weight:400;src:url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf')format('opentype')
 }
 
+
+body, html{
+    font-family: "Cafe24Ssurround";
+    margin: 0;
+    padding: 0;
+    background-color: #F7FFE7;
+
+}
+
+.outer{
+    position: relative;
+    /* 상하좌우 정렬 */
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.score-container{
+    font-size: 40px;
+    font-family: "Cafe24Ssurround";
+    color: #464646;
+    margin-right: 70px;
+    margin-bottom: 30px; /* 조절 가능한 마진 값 */
+}
 .container{
     position: relative;
-    height: 100vh;
     /* 상하좌우 정렬 */
     display : flex;
     justify-content: center;
     align-items: center;
 
 }
+.next{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 500px;
+    margin-left: 20px;
+    width : 80px;
+    height: 80px;
+    border: 3px solid #b5b5b5;
+    background-color: white;
+    border-radius: 5px;
+}
 
+.next .next-text{
+    color : black;
+    position: relative;
+    
+}
+
+.next .next-block{
+    margin : 5px;
+    width: 35px;
+    height: 35px;
+    position: relative;
+    border-radius: 6px;
+}
 .inner{
+    background-color: white;
     margin-top: -100px;
     flex-direction: column;
     /* width: 340px; */
     border: 4px solid #EFEFEF;
     border-radius: 10px;
 }
-
 .content{
     flex : 1 1 auto;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 30px 30px;
+    grid-template-rows: 40px 40px;
     grid-gap: 3px;
     margin : 5px;
 }
-
 .background_block{
-    width : 30px;
-    height: 30px;
+    width : 40px;
+    height: 40px;
     position: relative;
-    border-radius: 3px;
+    border-radius: 4px;
     background-color: #EFEFEF;
 }
 
