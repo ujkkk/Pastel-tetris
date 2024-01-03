@@ -68,7 +68,7 @@ body, html{
     height: 70px;
     border: 3px solid #dadada;
     background-color: white;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .next-text{
@@ -76,8 +76,6 @@ body, html{
     font-size: 20px;
     font-family: "Cafe24Ssurround";
     position: relative;
-    margin-bottom: 5px;
-    
 }
 
 .next .next-block{

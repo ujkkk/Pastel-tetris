@@ -1,13 +1,15 @@
-class Block {
-    constructor(_x, _y, _color){
-        this.x = _x;
-        this.y = _y;
+export class Block {
+    constructor(_row, _col, _color){
+        this.row = _row;
+        this.col = _col;
         this.color = _color;
     }
 
-    draw(){
-        blocksDiv[this.x*COL+this.y].style.backgroundColor = this.color;
+    getColor(){
+        return this.color;
     }
-}
 
-export default Block;
+    // draw(blocksDiv){
+    //     blocksDiv[this.row*COL+this.col].style.backgroundColor = this.color;
+    // }
+}
