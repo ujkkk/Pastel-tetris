@@ -1,9 +1,15 @@
+// 해당 위치에 터지는 애니메이션 생성
 export function poptAnimation(pos, color){
     applyRandomButtonColor(color); 
     $(".fancy-block").eq(pos).bind('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
         $(".fancy-block").removeClass('active');
     }) 
      $(".fancy-block").eq(pos).addClass("active");
+}
+
+
+export function setColorOfBlock(index, color){
+    $(".block").eq(index).css("background-color", color);
 }
 
   // 색상 지정

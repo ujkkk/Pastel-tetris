@@ -9,7 +9,7 @@ export class Block {
         return this.color;
     }
 
-    // draw(blocksDiv){
-    //     blocksDiv[this.row*COL+this.col].style.backgroundColor = this.color;
+    // draw(blockMapDiv){
+    //     blockMapDiv[this.row*COL+this.col].style.backgroundColor = this.color;
     // }
 }

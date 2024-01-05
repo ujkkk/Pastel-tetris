@@ -103,7 +103,7 @@ body, html{
     grid-gap: 3px;
     margin : 5px;
 }
-.background_block{
+.block{
     width : 40px;
     height: 40px;
     position: relative;
@@ -111,11 +111,11 @@ body, html{
     background-color: #EFEFEF;
 }
 
-.block{
+/* .block{
     width : 30px;
     height: 30px;
     position: absolute;
     border-radius: 3px;
     background-color: #BEDBE8;
 }
-
+ */
