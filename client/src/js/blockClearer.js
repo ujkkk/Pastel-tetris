@@ -1,5 +1,6 @@
-import { poptAnimation, drawBlock, drawScore} from "./style.js"
+import { poptAnimation, drawBlock, drawScore, drawBestSocre} from "./style.js"
 import { ROW, COL, INCREASE_POINT} from "./constant.js"
+import { saveScoreToFile, readScoreFromFile } from "./file.js";
 
 import { Block } from "./component/block.js";
 import { playLineClear } from './component/sound.js';
@@ -14,8 +15,10 @@ class BlockClearer{
         this.isExist = false;
         this.deleteBlockMap = null;
         this.score = 0;
+        this.bestSocre = readScoreFromFile();
 
         drawScore(this.score);
+        drawBestSocre(this.bestSocre);
     }
 
     // 사라질 블럭 체크 후 삭제
@@ -50,7 +53,12 @@ class BlockClearer{
         return (this.score%(INCREASE_POINT*10))== 0? true : false;
     }
 
-    
+    renewBestScore(){
+        // 최고 기록 갱신
+        if(this.score > this.bestSocre)
+            saveScoreToFile(this.score);    
+    }
+
     increseScore(){
         this.score += INCREASE_POINT;
         drawScore(this.score)

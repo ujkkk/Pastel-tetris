@@ -31,3 +31,8 @@ function applyRandomButtonColor(color) {
 export function drawScore(score){
     $(".score").html(score);
   }
+
+  export function drawBestSocre(score){
+    $("#best-score").html(score);
+  }
+

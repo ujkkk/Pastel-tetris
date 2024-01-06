@@ -25,8 +25,11 @@ class TetrisGame{
     run(){
         // 블록 떨어지기
         if(!this.blockManager.moveDown()){
-            if(this.isGameOver())
+            if(this.isGameOver()){
+                this.blockClearer.renewBestScore();
                 return false;
+            }
+                
             // 새 블록 생성
             this.blockManager.startNew()
             // 연속 블록 체크

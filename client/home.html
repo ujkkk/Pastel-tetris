@@ -8,19 +8,30 @@
 </head>
 <body>
     <div class="outer">
-        <div class="score-container"><span class="score">0</span></div>
+        
+        <!-- 점수판 -->
+        <div class="score-container">
+            <span class="score"></span>
+            <div class="best-score-container">
+                <div class="best-score-title">BEST</div>
+                <div id="best-score">0</div>
+            </div>
+        </div>
+        
         <div class="container">
+            <!-- 테트리스 게임 판 -->
             <div class="inner">
                 <div class="content"></div>
             </div>
+             <!-- next 블럭 창 -->
             <div class="next-container">
                 <div class="next-text">NEXT</div>
                 <div class="next">
                     <div class="next-block"></div>
                 </div> 
             </div>
-            
         </div>
+       
     </div>
 
     <script type="module" src="./src/js/init.js"></script>
