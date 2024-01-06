@@ -1,5 +1,5 @@
 import {ROW, COL} from "./constant.js"
-import {setColorOfBlock} from "./style.js"
+import {drawBlock} from "./style.js"
 
 import { Block } from "./component/block.js";
 import { Colors, getRandomColor } from "./component/color.js";
@@ -18,67 +18,72 @@ class BlockManager{
     moveRight() {
         if(this.blockLoc%COL == COL-1 || this.checkCrushWithSideBlock(true) || !this.canDown())
             return;
-        setColorOfBlock(this.blockLoc, Colors.gray);
+        drawBlock(this.blockLoc, Colors.gray);
         this.blockLoc +=1;
-        setColorOfBlock(this.blockLoc, this.currentColor);
+        drawBlock(this.blockLoc, this.currentColor);
     }
     
     moveLeft() {
         if(this.blockLoc%COL == 0 || this.checkCrushWithSideBlock(false) || !this.canDown())
             return; 		
-        setColorOfBlock(this.blockLoc, Colors.gray);
+        drawBlock(this.blockLoc, Colors.gray);
         this.blockLoc -= 1;
-        setColorOfBlock(this.blockLoc, this.currentColor);
+        drawBlock(this.blockLoc, this.currentColor);
     }
     
     moveDirect(){
-        setColorOfBlock(this.blockLoc, Colors.gray);
-        while(!this.checkCrushBlock() && !this.checkCrushFloor()){
+        drawBlock(this.blockLoc, Colors.gray);
+        while(this.canDown()){
             this.blockLoc += (COL);
             if(this.blockLoc >= ROW*COL){
                 this.blockLoc -= COL;
                 break;
             }
         }
-        setColorOfBlock(this.blockLoc, this.currentColor);
+        drawBlock(this.blockLoc, this.currentColor);
         // 더 이상 내려 갈 수 없는 경우, 블록 객체를 배열에 삽입함
         this.addBlock();
-        // // 연속 블록 체크
-        // clearBlocks();
+        this.startNew();
+    
     }
     
     moveDown(){
         if(this.canDown()) {
-            setColorOfBlock(this.blockLoc, Colors.gray);		
+            drawBlock(this.blockLoc, Colors.gray);		
             this.blockLoc += COL;
-            setColorOfBlock(this.blockLoc, this.currentColor);
+            drawBlock(this.blockLoc, this.currentColor);
             return true;
         }
-        else {
-            // 더 이상 내려 갈 수 없는 경우, 블록 객체를 배열에 삽입함
-            this.addBlock();
-            return false;
-        }	
+        this.addBlock();
+        return false;	
+    }
+
+    checkGameOver(){
+        if(!this.canDown() &&Math.floor(this.blockLoc/COL) == 0)
+            return true;
+        return false;
     }
     
-    startNew() {
-        // new start
-        this.blockLoc = Math.floor(Math.random()*COL);
-        if(this.currentColor == null)
-            this.currentColor = getRandomColor();
-        else this.currentColor = this.nextColor;
-        
-        setColorOfBlock(this.blockLoc, this.currentColor);
-        this.selectNextColor();
-    }
-    
+    // 블록 추가
     addBlock(){
         let row = Math.floor(this.blockLoc/COL);
         let col = this.blockLoc%COL;
     
         this.blockMap[this.blockLoc] = new Block(row,col, this.currentColor);
-        setColorOfBlock(this.blockLoc, this.currentColor);
-        this.startNew();
+        drawBlock(this.blockLoc, this.currentColor);
+    }
+
+    // 새블록 시작
+    async startNew() {
+        // new start
+        this.blockLoc = Math.floor(Math.random()*COL);
+        if(this.currentColor == null)
+            this.currentColor = getRandomColor();
+        else 
+            this.currentColor = this.nextColor;
+        
+        drawBlock(this.blockLoc, this.currentColor);
+        this.selectNextColor();
     }
     
      selectNextColor(){

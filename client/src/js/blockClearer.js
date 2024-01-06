@@ -1,4 +1,4 @@
-import { poptAnimation, setColorOfBlock} from "./style.js"
+import { poptAnimation, drawBlock, drawScore} from "./style.js"
 import { ROW, COL, INCREASE_POINT} from "./constant.js"
 
 import { Block } from "./component/block.js";
@@ -14,10 +14,12 @@ class BlockClearer{
         this.isExist = false;
         this.deleteBlockMap = null;
         this.score = 0;
+
+        drawScore(this.score);
     }
 
     // 사라질 블럭 체크 후 삭제
-    clearBlocks(){
+    async clearBlocks(){
         this.deleteBlockMap = Array.from(Array(ROW), () => Array(COL).fill(false));
         for(let block of this.blockMap){
             if(block != null){
@@ -47,10 +49,11 @@ class BlockClearer{
     checkSpeed(){
         return (this.score%(INCREASE_POINT*10))== 0? true : false;
     }
+
     
     increseScore(){
         this.score += INCREASE_POINT;
-        $(".score").html(this.score);
+        drawScore(this.score)
     }
 
     // 삭제해야할 블록 삭제
@@ -67,7 +70,7 @@ class BlockClearer{
                     }
                     let deleteBlockLoc = i*COL + j;
                     poptAnimation(deleteBlockLoc, this.blockMap[deleteBlockLoc].color);
-                    setColorOfBlock(deleteBlockLoc, Colors.gray);
+                    drawBlock(deleteBlockLoc, Colors.gray);
                     
                     this.blockMap[deleteBlockLoc] = null;	
                 }
@@ -94,12 +97,12 @@ class BlockClearer{
                 while(this.isRange(Math.floor(nextPos/COL), nextPos%COL)){
                     
                     if(this.blockMap[nextPos]== null){
-                        //setColorOfBlock(this.blockLoc, Colors.gray);
-                        setColorOfBlock(curPos, Colors.gray);
+                        //drawBlock(this.blockLoc, Colors.gray);
+                        drawBlock(curPos, Colors.gray);
                         this.blockMap[curPos] = null;
     
                         this.blockMap[nextPos] = new Block(Math.floor(nextPos/COL), nextPos%COL, cloneblockMap[curPos].color);
-                        setColorOfBlock(nextPos, this.blockMap[nextPos].getColor())
+                        drawBlock(nextPos, this.blockMap[nextPos].getColor())
                         break;
                     }
     

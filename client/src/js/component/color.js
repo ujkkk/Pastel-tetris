@@ -19,11 +19,11 @@ export function getRandomColor(){
 }
 
 export const Colors = {
-    gray: "#EFEFEF",
+    gray: "#e6e6e6",
     red: "#F59C9D",
     orange : "#F5C4A2",
     mint:"#98D7DD",
     pink : "#F5D0D4",
-    violet : "#D0D0DF",
-    yellow : "#F4E5CB"
+    violet : "#A5C7F0",
+    yellow : "#FCDFAC"
 }

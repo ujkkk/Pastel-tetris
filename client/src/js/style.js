@@ -8,7 +8,7 @@ export function poptAnimation(pos, color){
 }
 
 
-export function setColorOfBlock(index, color){
+export function drawBlock(index, color){
     $(".block").eq(index).css("background-color", color);
 }
 
@@ -26,4 +26,8 @@ function applyRandomButtonColor(color) {
             '--after-bg-color': color
         });
     });
+  }
+
+export function drawScore(score){
+    $(".score").html(score);
   }

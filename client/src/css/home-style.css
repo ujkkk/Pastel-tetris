@@ -92,8 +92,8 @@ body, html{
     margin-top: -100px;
     flex-direction: column;
     /* width: 340px; */
-    border: 4px solid #EFEFEF;
-    border-radius: 10px;
+    border: 7px solid #BBAE9F;;
+    border-radius: 7px;
 }
 .content{
     flex : 1 1 auto;
@@ -108,7 +108,7 @@ body, html{
     height: 40px;
     position: relative;
     border-radius: 6px;
-    background-color: #EFEFEF;
+    background-color: #e6e6e6;
 }
 
 /* .block{

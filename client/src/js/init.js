@@ -1,14 +1,12 @@
 import {ROW, COL} from "./constant.js";
 import TetrisGame from "./tetrisGame.js";
 
-
-var tetris;
 var timerID;
+var tetris;
 
 window.focus();
 window.onload =()=> {
-    tetris = new TetrisGame();
-    init();
+    start();
 }
 
 window.onkeydown = function (e) {
@@ -20,39 +18,26 @@ window.onkeydown = function (e) {
         tetris.moveDirect();
 }
 
-function init(){
-    createBackgroundBlock();
-    start();
-}
-
 function start(){
     tetris = new TetrisGame();
     tetris.init();
     
-    // timer set
-    timerID = setInterval(() => tetris.moveDown(),300);
-}
-
-// 배경 블록 생성
- function createBackgroundBlock(){
-    const container = document.querySelector(".content");
-
-    for(let i=0; i< ROW; i++){
-        for(let j= 0; j< COL; j++){
-            let fancy_block = document.createElement("div");
-            fancy_block.classList.add('fancy-block');
-            
-            let left = document.createElement("div");
-            left.classList.add('left-frills');
-            left.classList.add('frills');
-            fancy_block.appendChild(left);
-
-            let block = document.createElement("div");
-            block.classList.add('block');
-            fancy_block.appendChild(block);
-            //blockMapDiv[i*COL + j] = block;
-
-            container.appendChild(fancy_block);
-        }
+    if (timerID) {
+        clearInterval(timerID);
     }
+
+    // 새로운 타이머 설정
+    timerID = setInterval(() => {
+        // 게임 오버 체크
+        if (!tetris.run()) {
+            clearInterval(timerID);  // 타이머 해제
+            alert("Game Over!");     // 또는 다른 처리를 수행
+
+            // 다시 시작
+            start();
+        }
+    }, 300);
+
 }
+
+
