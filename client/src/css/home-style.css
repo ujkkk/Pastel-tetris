@@ -42,33 +42,37 @@ body, html{
     flex-direction: row;
     justify-content: flex-start;
 }
-.best-score-container{
+.small-outer{
+    display: flex;
+    flex-direction: row;
+}
+/*스몰 박스(스피드, 최고기록)*/
+.small-block-container{
     height: 60px;
     min-width: 70px;
     /* width: 70px; */
     position: relative;
     display: flex;
     flex-direction: column;
-    background-color: rgb(123, 116, 103);
+    background-color: #897D70;
     border-radius: 6px;
 
-    margin-left: auto;
+    margin-left: 10px;
     text-align: center;
     align-items: center;
     justify-content: center;
 }
-.best-score-title{
+.small-block-container .small-block-title{
     font-size: 12px;
     color:#CDC2B6;
     margin-top: 5px;
 }
 
-#best-score{
+.small-block-content{
     position: relative;
     font-size: 22px;
     color: rgb(255, 255, 255);
     margin: 3px;
- 
 }
 
 .score{

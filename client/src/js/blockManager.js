@@ -74,10 +74,10 @@ class BlockManager{
     }
 
     // 새블록 시작
-    async startNew() {
+    startNew() {
         // new start
-        this.blockLoc = Math.floor(Math.random()*COL);
-        if(this.currentColor == null)
+        this.blockLoc = 4;
+        if(!this.currentColor)
             this.currentColor = getRandomColor();
         else 
             this.currentColor = this.nextColor;

@@ -1,9 +1,8 @@
-import { poptAnimation, drawBlock, drawScore, drawBestSocre} from "./style.js"
-import { ROW, COL, INCREASE_POINT} from "./constant.js"
+import {poptAnimation, drawBlock, drawScore, drawBestSocre, drawSpeed} from "./style.js"
 import { saveScoreToFile, readScoreFromFile } from "./file.js";
-
-import { Block } from "./component/block.js";
 import { playLineClear } from './component/sound.js';
+import {Block} from "./component/block.js";
+import {ROW, COL, INCREASE_POINT, POINT_GET_COUNT} from "./constant.js"
 import { Colors } from "./component/color.js";
 
 /* 블록 삭제 및 점수 관리 클래스 */
@@ -14,15 +13,19 @@ class BlockClearer{
         this.blockMap = _blockMap;
         this.isExist = false;
         this.deleteBlockMap = null;
+
         this.score = 0;
+        this.speed = 1;
+        this.clearCount = 1;
         this.bestSocre = readScoreFromFile();
 
         drawScore(this.score);
+        drawSpeed(this.speed);
         drawBestSocre(this.bestSocre);
     }
 
     // 사라질 블럭 체크 후 삭제
-    async clearBlocks(){
+    clearBlocks(){
         this.deleteBlockMap = Array.from(Array(ROW), () => Array(COL).fill(false));
         for(let block of this.blockMap){
             if(block != null){
@@ -38,19 +41,23 @@ class BlockClearer{
         
         // 사라질 블록이 없을 때까지 반복
         if(isDelete){
+            this.clearCount++;
             // 점수 증가
             this.increseScore();
-            if(this.checkSpeed()){
-                
-            }
             // 블록 내려오기
             this.posChange();
             this.clearBlocks();
         }
     }
-    
-    checkSpeed(){
-        return (this.score%(INCREASE_POINT*10))== 0? true : false;
+
+    isSpeedUp(){
+        if((this.clearCount % (POINT_GET_COUNT)) === 0){
+            this.clearCount = 1;
+            this.speed += 1;
+            drawSpeed(this.speed);
+            return true;
+        }
+        return false
     }
 
     renewBestScore(){
@@ -60,7 +67,7 @@ class BlockClearer{
     }
 
     increseScore(){
-        this.score += INCREASE_POINT;
+        this.score += (INCREASE_POINT + this.speed*10);
         drawScore(this.score)
     }
 

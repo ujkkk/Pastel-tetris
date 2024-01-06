@@ -1,5 +1,5 @@
 
-import {ROW, COL} from "./constant.js"
+import {ROW, COL, INCREASE_SPEED} from "./constant.js"
 
 import BlockManager from "./blockManager.js";
 import BlockClearer from "./blockClearer.js"
@@ -10,8 +10,7 @@ class TetrisGame{
         /* 주요 변수 */
         this.blockLoc = 0;// 블록의 현재 위치
         this.blockMap = Array(ROW * COL).fill(null); // Block list
-        this.deleteBlockMap = Array.from(Array(ROW), () => Array(COL).fill(false));
-        
+
         this.blockManager = new BlockManager(this.blockLoc, this.blockMap);
         this.blockClearer = new BlockClearer(this.blockLoc, this.blockMap);
         
@@ -25,11 +24,11 @@ class TetrisGame{
     run(){
         // 블록 떨어지기
         if(!this.blockManager.moveDown()){
-            if(this.isGameOver()){
+            if(this.isGameOver()) {
                 this.blockClearer.renewBestScore();
                 return false;
             }
-                
+
             // 새 블록 생성
             this.blockManager.startNew()
             // 연속 블록 체크
@@ -37,6 +36,10 @@ class TetrisGame{
              
         }
         return true;
+    }
+
+    isSpeedUp(){
+        return this.blockClearer.isSpeedUp();
     }
 
     isGameOver(){
@@ -84,7 +87,6 @@ class TetrisGame{
                 let block = document.createElement("div");
                 block.classList.add('block');
                 fancy_block.appendChild(block);
-                //blockMapDiv[i*COL + j] = block;
 
                 container.appendChild(fancy_block);
             }

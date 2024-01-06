@@ -36,3 +36,7 @@ export function drawScore(score){
     $("#best-score").html(score);
   }
 
+export function drawSpeed(speed){
+    $("#speed").html(speed);
+}
+
