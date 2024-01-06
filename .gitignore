@@ -1,3 +1,5 @@
 server/node_modules/*
+
 client/docs/.DS_Store
 .DS_Store
+.idea/*
