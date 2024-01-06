@@ -77,8 +77,8 @@ class BlockClearer{
         
         for(let i=0; i<ROW; i++){
             for(let j=0; j<COL; j++){
-                if(this.deleteBlockMap[i][j] == true){
-                    if(isDelete == false){
+                if(this.deleteBlockMap[i][j] === true){
+                    if(isDelete === false){
                         // 소리 재생
                         playLineClear();
                         isDelete = true;
@@ -132,11 +132,11 @@ class BlockClearer{
     // 연속된 블록 확인 후 deleteBlockMap 변경
       addClearblockMap(startPos){
         this.addClearBlockAtVertical(startPos);
-        if(this.isExist) return;
+       // if(this.isExist) return;
         this.addClearBlockAtHorizon(startPos);
-        if(this.isExist) return;
+       // if(this.isExist) return;
         this.addClearBlockAtDiagonal1(startPos);
-        if(this.isExist) return;
+       // if(this.isExist) return;
         this.addClearBlockAtDiagonal2(startPos);
     }
     

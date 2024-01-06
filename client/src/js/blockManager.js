@@ -115,7 +115,7 @@ class BlockManager{
             if(existedBlock == null)
                 continue;
             
-             if(row+1 == existedBlock.row && col == existedBlock.col+(isRight? -1 : 1)){
+             if(row+1 === existedBlock.row && col === existedBlock.col+(isRight? -1 : 1)){
                 return true;
             }
         }
@@ -133,7 +133,7 @@ class BlockManager{
             if(existedBlock == null)
                 continue;
             
-             if(row+1 == existedBlock.row && col == existedBlock.col){
+             if(row+1 === existedBlock.row && col === existedBlock.col){
                 return true;
             }
         }

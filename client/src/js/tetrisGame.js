@@ -49,7 +49,6 @@ class TetrisGame{
         return false;
     }
 
-
     /* 블록 조작 관련 함수 */
     moveRight() {
         this.blockManager.moveRight();

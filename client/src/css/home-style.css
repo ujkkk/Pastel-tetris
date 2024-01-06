@@ -17,22 +17,40 @@ body, html{
     font-family: "Cafe24Ssurround";
     margin: 0;
     padding: 0;
-    background-color: #FCF8EE;
+    background-color: #FFFAF3;
+    /*background-image: url('../../resource/image/바나나.png');*/
+    /*background-size : cover*/
+
+}
+.outer1{
+    width: 15vw;
+    position: absolute;
+    font-size: 30px;
+    color:#5A5046;
+    padding-top: 20px;
+    cursor: pointer;
+
+
+}
+.outer1 span{
+    display: block;
+    font-size: 12px;
 
 }
 
-.outer{
+.outer2{
     position: absolute;
     top: 50%;
-    left: 50%;
+    left : 50%;
     transform: translate(-50%, -50%);
+    padding-left: 10%;
+    padding-right: 7%;
     /* 상하좌우 정렬 */
     justify-content: center;
     align-items:flex-start;
-    /* width: 60vw; */
     height: 100vh;
     display: flex;
-    background-color: #FCF8EE;
+    background-color: #FFFAF3;
     flex-direction: column;
 }
 
@@ -70,7 +88,7 @@ body, html{
 
 .small-block-content{
     position: relative;
-    font-size: 22px;
+    font-size: 18px;
     color: rgb(255, 255, 255);
     margin: 3px;
 }
