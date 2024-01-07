@@ -23,9 +23,9 @@ body, html{
 
 }
 .outer1{
-    width: 15vw;
+    width: 20vw;
     position: absolute;
-    font-size: 30px;
+    font-size: 40px;
     color:#5A5046;
     padding-top: 20px;
     cursor: pointer;
@@ -59,6 +59,7 @@ body, html{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    margin-bottom: 5px;
 }
 .small-outer{
     display: flex;
@@ -72,7 +73,7 @@ body, html{
     position: relative;
     display: flex;
     flex-direction: column;
-    background-color: #897D70;
+    background-color: #5A5046;
     border-radius: 6px;
 
     margin-left: 10px;
@@ -123,23 +124,24 @@ body, html{
     align-items: center;
     justify-content: center;
     width : 70px;
-    height: 70px;
-    border: 4px solid #bcb3a4;
-    background-color: white;
-    border-radius: 10px;
+    height: 60px;
+    /*border: 4px solid #767167;*/
+    /*background-color: white;*/
+    border-radius: 5px;
 }
 
 .next-text{
-    color : #767167;
-    font-size: 20px;
+    color : #5A5046;
+    font-size: 17px;
+    margin-top: 13px;
     font-family: "Cafe24Ssurround";
     position: relative;
 }
 
 .next .next-block{
     margin : 5px;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     position: relative;
     border-radius: 6px;
 }

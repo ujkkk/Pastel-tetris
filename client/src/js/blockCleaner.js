@@ -6,7 +6,7 @@ import {ROW, COL, INCREASE_POINT, POINT_GET_COUNT} from "./constant.js"
 import { Colors } from "./component/color.js";
 
 /* 블록 삭제 및 점수 관리 클래스 */
-class BlockClearer{
+class BlockCleaner {
 
     constructor( blockLoc, _blockMap){
         this.blockLoc = blockLoc;
@@ -108,7 +108,7 @@ class BlockClearer{
                 if(this.blockMap[curPos] == null)
                     continue;
     
-                var nextPos = curPos + COL;     
+                let nextPos = curPos + COL;
                 while(this.isRange(Math.floor(nextPos/COL), nextPos%COL)){
                     
                     if(this.blockMap[nextPos]== null){
@@ -146,7 +146,7 @@ class BlockClearer{
         let isVisited = Array.from(Array(ROW), () => Array(COL).fill(false));
         let dx = [0,0];
         let dy = [1, -1];
-        this.dfs(startPos, 0, isVisited, Array(), dx, dy);
+        this.dfs(startPos, 0, isVisited,  Array(), dx, dy);
     }
     
     // 수평 방향으로 연속된 블록 체크
@@ -181,6 +181,7 @@ class BlockClearer{
     }
     
     dfs(pos, depth, isVisited, deleteBlockList, dx, dy){
+        deleteBlockList.push(pos);
         if(depth >= 3){
             deleteBlockList.forEach(pos => {
                 this.deleteBlockMap[Math.floor(pos/COL)][pos%COL] = true; 
@@ -196,7 +197,6 @@ class BlockClearer{
                 let newPos = newRow*COL + newCol;
     
                 if(this.blockMap[newPos] != null &&  this.blockMap[pos].color === this.blockMap[newPos].color){
-                    deleteBlockList.push(newPos);
                     isVisited[newRow][newCol] = true;   
                     this.dfs(newPos, depth+1, isVisited, deleteBlockList,dx,dy);
                     deleteBlockList.pop();
@@ -206,4 +206,4 @@ class BlockClearer{
     }
 }
 
-export default BlockClearer;
+export default BlockCleaner;

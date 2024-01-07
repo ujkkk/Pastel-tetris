@@ -19,34 +19,7 @@ window.onkeydown = function (e) {
         tetris.moveDirect();
 }
 
-// function start(){
-//     tetris = new TetrisGame();
-//     tetris.init();
-//
-//     if (timerID) {
-//         clearInterval(timerID);
-//     }
-//
-//     // 새로운 타이머 설정
-//     timerID = setInterval(() => {
-//         // 게임 오버 체크
-//         if (!tetris.run()) {
-//             clearInterval(timerID);  // 타이머 해제
-//             intervalTime = START_INTERVAL;
-//             alert("Game Over!");     // 또는 다른 처리를 수행
-//
-//             // 다시 시작
-//             start();
-//         }
-//
-//         if(tetris.isSpeedUp()){
-//             console.log("speed up: " + intervalTime);
-//             intervalTime -= INCREASE_SPEED;
-//         }
-//
-//     }, intervalTime);
-//
-// }
+
 function start() {
     tetris = new TetrisGame();
     tetris.init();
