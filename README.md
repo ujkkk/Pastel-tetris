@@ -1,14 +1,20 @@
 # Pastel-Tetris
-웹에서 테트리스 즐기기! 웹 개념 다지기 위한 프로젝트
+웹에서 간단히 테트리스 즐기기!
 
 ### 🔆 실행 화면
-<img width="999" alt="image" src="https://github.com/ujkkk/Pastel-tetris/assets/88374384/606f8c59-cddc-48ce-a0c8-7b25f4ff8377">
+<img width="700" alt="image" src="https://github.com/ujkkk/BOJ/assets/88374384/2d3a9f76-d016-4dec-962c-eb1f0ff46d64">
 
-### 🖤 사용 언어
+### 🛫 시연 영상
+클릭 시 이동합니다! <br>
 
-JavaScript, html, css
+[![Video Label](http://img.youtube.com/vi/MxSlti5n-Ys/0.jpg)](https://youtu.be/MxSlti5n-Ys)
 
-### 🩶 개발 환경
+### 사용 언어
 
-WebStorm
+- JavaScript, html, css <br>
+- Node.js, express
+
+### 개발 환경
+
+- WebStorm
 
